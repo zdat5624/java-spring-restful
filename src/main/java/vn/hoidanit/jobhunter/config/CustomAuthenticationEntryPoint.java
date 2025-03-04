@@ -35,12 +35,20 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
 
-        String errorMessage = Optional.ofNullable(authException.getCause()) // NULL
-                .map(Throwable::getMessage)
-                .orElse(authException.getMessage());
+        // String errorMessage = Optional.ofNullable(authException.getCause()) // NULL
+        // .map(Throwable::getMessage)
+        // .orElse(authException.getMessage());
+        // res.setError(errorMessage);
+
+        String errorMessage;
+        if (authException.getCause() != null) {
+            errorMessage = authException.getCause().getMessage();
+        } else {
+            errorMessage = authException.getMessage();
+        }
         res.setError(errorMessage);
 
-        res.setMessage("Token không hợp lệ (hết hạn, không đúng định dạng, hoặc không truyền JWT ở header)...");
+        res.setMessage("Token không hợp lệ (hết hạn, không đúng định dạng, hoặc không truyền JWT ở header, ...)");
 
         mapper.writeValue(response.getWriter(), res);
     }
